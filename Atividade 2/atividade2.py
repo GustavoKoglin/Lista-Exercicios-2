@@ -1,30 +1,25 @@
-# Abrir arquivo notas.txt em modo de leitura
-with open('Notas dos Alunos.txt', 'r') as notas:
-    # Abrir arquivos de saída em modo de escrita
-    with open('aprovados.txt', 'w') as aprovados, \
-         open('exame.txt', 'w') as exame, \
-         open('reprovados.txt', 'w') as reprovados:
-             
-        # Iterar sobre cada linha do arquivo notas.txt
-        for linha in notas:
-            # Dividir a linha em nome e notas (por vírgula)
-            nome, nota1, nota2, nota3 = linha.strip().split('\n')
-            # Converter as notas para float
-            nota1, nota2, nota3 = float(nota1), float(nota2), float(nota3)
-            # Calcular a média das notas
-            media = (nota1 + nota2 + nota3) / 3
-            print(linha)
-            # Verificar o resultado do aluno
-            if media >= 7:
-                # Salvar informações do aluno em aprovados.txt
-                aprovados.write(f'{nome}, {media:.2f}, Aprovado\n')
-                aprovados.close()
-            elif media >= 5:
-                # Salvar informações do aluno em exame.txt
-                exame.write(f'{nome}, {media:.2f}, Exame\n')
-                exame.close()
-            else:
-                # Salvar informações do aluno em reprovados.txt
-                reprovados.write(f'{nome}, {media:.2f}, Reprovado\n')
-                reprovados.close()
-notas.close()
+with open("notas.txt", "r") as arquivo:
+    # Loop para ler cada linha do arquivo
+    for linha in arquivo:
+        # Divide a linha em uma lista de strings separadas por vírgulas
+        dados = linha.strip().split(",")
+        # Extrai as informações do aluno
+        nome = dados[0]
+        nota1 = float(dados[1])
+        nota2 = float(dados[2])
+        nota3 = float(dados[3])
+        # Calcula a média das notas
+        media = (nota1 + nota2 + nota3) / 3
+        # Verifica a situação do aluno
+        if media >= 7:
+            situacao = "Aprovado"
+            arquivo_saida = "aprovados.txt"
+        elif media >= 5:
+            situacao = "Exame"
+            arquivo_saida = "exame.txt"
+        elif media < 5:
+            situacao = "Reprovado"
+            arquivo_saida = "reprovados.txt"
+        # Salva as informações do aluno no arquivo correspondente
+        with open(arquivo_saida, "a") as saida:
+            saida.write(f"{nome} - Media: {media:.2f} - Situacao: {situacao}\n")

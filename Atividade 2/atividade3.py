@@ -1,39 +1,33 @@
-# Abrir arquivo de exame
+# Função para calcular a nova média
+def calcular_media(nota1, nota2, nota3, nota_exame, media_anterior):
+    nova_media = (nota1 + nota2 + nota3 + nota_exame) / 4.0
+    if media_anterior is not None:
+        nova_media = (nova_media + media_anterior) / 2.0
+    return nova_media
+
+
+# Ler o arquivo exame.txt
 with open('exame.txt', 'r') as file:
-    exame_data = file.readlines()
+    linhas = file.readlines()
 
-# Abrir arquivo de notas
-with open('notas.txt', 'r') as file:
-    notas_data = file.readlines()
+# Atualizar os arquivos aprovados.txt e reprovados.txt
+with open('aprovados.txt', 'a') as aprovados_file:
+    with open('reprovados.txt', 'a') as reprovados_file:
+        for linha in linhas:
+            # Obter as informações do aluno e a nota do exame
+            dados = linha.split()
+            nome = dados[0]
+            nota1 = float(dados[1])
+            nota2 = float(dados[2])
+            nota3 = float(dados[3])
+            nota_exame = float(dados[4])
+            media_anterior = float(dados[5]) if dados[5] != '-' else None
 
-# Criar dicionário para armazenar notas dos alunos do exame
-exame_notas = {}
-for line in exame_data:
-    aluno, nota = line.strip().split(':')
-    exame_notas[aluno] = float(nota)
+            # Calcular a nova média
+            nova_media = calcular_media(nota1, nota2, nota3, nota_exame, media_anterior)
 
-# Criar dicionário para armazenar notas dos alunos das notas gerais
-notas_alunos = {}
-for line in notas_data:
-    aluno, nota1, nota2, nota3 = line.strip().split(',')
-    notas_alunos[aluno] = [float(nota1), float(nota2), float(nota3)]
-
-# Calcular média das notas gerais dos alunos
-media_alunos = {}
-for aluno, notas in notas_alunos.items():
-    media_aluno = sum(notas) / len(notas)
-    media_alunos[aluno] = media_aluno
-
-# Atualizar médias dos alunos que fizeram exame
-for aluno, nota in exame_notas.items():
-    media_anterior = media_alunos[aluno]
-    nova_media = (media_anterior * 3 + nota) / 4
-    media_alunos[aluno] = nova_media
-
-    # Verificar se o aluno foi aprovado ou reprovado
-    if nova_media >= 5:
-        with open('aprovados.txt', 'a') as file:
-            file.write(f'{aluno}: {nova_media:.2f} - Aprovado após exame\n')
-    else:
-        with open('reprovados.txt', 'a') as file:
-            file.write(f'{aluno}: {nova_media:.2f} - Reprovado após exame\n')
+            # Verificar se o aluno está aprovado ou reprovado
+            if nova_media >= 7:
+                aprovados_file.write(f'{nome} {nova_media:.1f} Aprovado após exame\n')
+            else:
+                reprovados_file.write(f'{nome} {nova_media:.1f} Reprovado após exame\n')
